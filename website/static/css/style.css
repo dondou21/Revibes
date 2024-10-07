@@ -1,16 +1,16 @@
 .d-flex .btn{
-    background: orange;
-    border: 2px solid orange;
+    background: #01ba5f;
+    border: 2px solid #01ba5f;
     border-radius: 8px;
     color: #fff;
 }
 .d-flex .btn:hover{
-    background: rgb(228, 150, 7);
-    border: 2px solid rgb(228, 150, 7);
+    background: #01ba5f;
+    border: 2px solid #01ba5f;
 }
 
 #right1 :hover{
-    color: orange;
+    color: #01ba5f;
     transition: 300ms;
 }
 
@@ -22,7 +22,7 @@
 }
 
 .container .row .col .row .col a {
-    background-color: orange;
+    background-color: #01ba5f;
     padding: 10px;
     border-radius: 10px;
     text-decoration: none;
@@ -31,7 +31,7 @@
 }
 
 .container .row .col .row .col a :hover {
-    background-color: rgb(201, 132, 5);
+    background-color: #01ba5f;
 }
 #column :hover{
     transform: scale(0.9);
@@ -40,6 +40,18 @@
 }
 
 #items :hover {
-    color: orange;
+    color: #01ba5f;
     transition: 200ms;
+}
+
+/* Style the logo */
+
+.logo {
+    display: flex;
+    align-items:flex-start;
+    justify-content: flex-start; /* Ensures it aligns to the left */
+}
+.logo img {
+    height: 100px;
+    width: auto;
 }
