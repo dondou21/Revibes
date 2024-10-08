@@ -8,14 +8,14 @@ class Customer(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True)
     username = db.Column(db.String(100))
-    password_hash = db.Column(db.string(150))
+    password_hash = db.Column(db.String(150))
     date_joined = db.Column(db.DateTime(), default=datetime.utcnow)
 
     @property
     def password(self):
         raise AttributeError('Password is not a readable')
     
-    @property.setter
+    @password.setter
     def password(self, password):
         self.password_hash = generate_password_hash(password=password)
 
@@ -43,11 +43,11 @@ class Product(db.Model):
          return '<Product> %r' % self.Product_name
     
 
-class Cart(db.model):
+class Cart(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     quantity = db.Column(db.Integer, nullable=False)
 
-    customer_link = db.Column(db.Integer, db.Foreignkey('customer.id'), nullable=False)
+    customer_link = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
     product_link = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
 
     def __str__(self):
@@ -58,8 +58,8 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     quantity = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Float, nullable=False)
-    status = db.Column(db.String, nulable=False)
-    payment_id = db.column(db.String, nullable=False)
+    status = db.Column(db.String(100), nullable=False)
+    # payment_id = db.column(db.String(1000), nullable=False)
 
     Customer_link = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
     product_link = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
