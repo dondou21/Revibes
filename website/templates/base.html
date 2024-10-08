@@ -77,13 +77,16 @@
               <ul class="dropdown-menu" aria-labelledby="profileDropdown">
   
               
-                <li><a class="dropdown-item" href="#">Profile <i class="fa-solid fa-user"></i></a></li>
+                {% if current_user.is_authenticated %}
+                <li><a class="dropdown-item" href="/profile/{{ current_user.id }}">Profile <i class="fa-solid fa-user"></i></a></li>
                 <li><a class="dropdown-item" href="#">Orders <i class="fa-solid fa-truck-fast"></i></a></li>
-                <li><a class="dropdown-item" href="#">Log Out <i class="fa-solid fa-right-from-bracket"></i></a></li>
-  
+                <li><a class="dropdown-item" href="/logout">Log Out <i class="fa-solid fa-right-from-bracket"></i></a></li>
                 
-                <li><a class="dropdown-item" href="#">Login <i class="fa-solid fa-right-to-bracket"></i></a></li>
+                {% else %}
+                
+                <li><a class="dropdown-item" href="/login">Login <i class="fa-solid fa-right-to-bracket"></i></a></li>
   
+                {% endif %}
               </ul>
   
             </li>
@@ -108,8 +111,8 @@
       {% endblock %}
 
       <footer class="container-fluid  text-center p-2 mt-5" style="background-color: #0471bb; color: white;">
-        <a href="https://github.com/Frost-Codes" style="color: white;">Amazon</a> | <span>
-          <i class="fa-sharp fa-regular fa-copyright"></i></span> 2023 All rights reserved
+        <a href="https://bit.ly/DondouAbiyi" style="color: white;">Rvibes</a> | <span>
+          <i class="fa-sharp fa-regular fa-copyright"></i></span> 2024 All rights reserved
   
       </footer>
   
