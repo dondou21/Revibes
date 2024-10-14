@@ -66,6 +66,24 @@ class Order(db.Model):
 
     def __str__(self):
         return '<Order %r>'  % self.id
+    
+class Booking(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    item_type = db.Column(db.Enum('Plastic', 'Metal', 'Cloths', 'Furniture', 'Oders', name='Item_type_range'), nullable=False)
+    item_description = db.Column(db.String(1000), nullable=False)
+    quantity = db.Column(db.Enum('0-5kg', '5kg-10kg', '10kg-20kg', ' > 20kg', name='quantity_range'), nullable=False)
+    date_of_appointment = db.Column(db.Date, nullable=False)
+    time_of_appointment = db.Column(db.Time, nullable=False)
+    item_picture = db.Column(db.String(1000), nullable=True)
+    latitude =db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    Customer_link = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
+
+    def __str__(self):
+        return '<Booking %r>' % self.id
+
 
     
     
