@@ -127,3 +127,4 @@ def delete_item(item_id):
         return redirect('/shop_items')
 
     return render_template('404.html')
+
