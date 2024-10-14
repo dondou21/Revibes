@@ -70,7 +70,7 @@ class Order(db.Model):
 class Booking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     item_type = db.Column(db.Enum('Plastic', 'Metal', 'Cloths', 'Furniture', 'Oders', name='Item_type_range'), nullable=False)
-    item_description = db.Column(db.String(1000), nullable=False)
+    item_description = db.Column(db.String(1000), nullable=True)
     quantity = db.Column(db.Enum('0-5kg', '5kg-10kg', '10kg-20kg', ' > 20kg', name='quantity_range'), nullable=False)
     date_of_appointment = db.Column(db.Date, nullable=False)
     time_of_appointment = db.Column(db.Time, nullable=False)
