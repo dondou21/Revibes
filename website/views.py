@@ -5,6 +5,7 @@ from .forms import BookingForm
 from werkzeug.utils import secure_filename
 from .models import Booking
 from . import db
+from datetime import date, time, datetime
 
 views = Blueprint('views', __name__)
 
@@ -30,9 +31,24 @@ def booking():
         longitude = form.latitude.data
 
         file = form.item_picture.data
-        file_name = secure_filename(file.filename)
-        file_path = f'./media/{file_name}'
-        file.save(file_path)
+
+        if date_of_appointment < datetime.today().date():
+            flash('Date of appointment cannot be in the pass!!!')
+            print('Booking Failed')
+            return render_template('booking.html', form=form)
+        
+        if not (time_of_appointment >= time(6, 0) and time_of_appointment <= time(21, 0)):
+            flash('Time of appointment must be between 6:00 AM and 9:00 PM !!!')
+            print('Booking Failed')
+            return render_template('booking.html', form=form)
+
+
+        if file:
+            file_name = secure_filename(file.filename)
+            file_path = f'./media/{file_name}'
+            file.save(file_path)
+        else:
+            file_path = None
 
         customer_link =current_user.id
 

@@ -4,8 +4,7 @@
 
 {% block body %}
 
-<h2>Add a Booking</h2>
-
+<h2>Booking Form</h2>
 <form action="" method="POST" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
 
@@ -22,25 +21,75 @@
                 <th scope="col">Add Booking</th>
             </tr>
         </thead>
-
         <tbody>
             <tr>
-                <td>{{ form.item_type(class="form-control") }}</td>
-                <td>{{ form.item_description(class="form-control") }}</td>
-                <td>{{ form.quantity(class="form-control") }}</td>
-                <td>{{ form.date_of_appointment(class="form-control") }}</td>
-                <td>{{ form.time_of_appointment(class="form-control") }}</td>
-                <td>{{ form.item_picture(class="form-control-file") }}</td>
+                <td>{{ form.item_type }}</td>
+                <td>{{ form.item_description }}</td>
+                <td>{{ form.quantity }}</td>
+                <td>{{ form.date_of_appointment }}</td>
+                <td>{{ form.time_of_appointment }}</td>
+                <td>{{ form.item_picture }}</td>
                 <td>
-                    {{ form.latitude(class="form-control", placeholder="Latitude") }}
-                    {{ form.longitude(class="form-control", placeholder="Longitude") }}
+                    <button type="button" onclick="getLocation()">Use Current Location</button>
+                    <div id="map" style="height: 300px; width: 100%;"></div>
+                    {{ form.latitude }}
+                    {{ form.longitude }}
                 </td>
-                <td>
-                    <button type="submit" class="btn btn-primary">Submit Booking</button>
-                </td>
+                <td>{{ form.submit}}</td>
             </tr>
         </tbody>
     </table>
 </form>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+<script>
+    let map;
+    let marker;
+    
+    function initMap() {
+        // Default map location (center of the map)
+        const defaultLocation = { lat: -1.970579, lng: 30.104429 }; // You can change this to any location
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: defaultLocation,
+            zoom: 15,
+        });
+
+        // Add a marker at the default location
+        marker = new google.maps.Marker({
+            position: defaultLocation,
+            map: map,
+            draggable: true, // Allow user to drag the marker
+        });
+
+        // When marker is dragged, update the latitude and longitude in the form
+        google.maps.event.addListener(marker, 'dragend', function() {
+            document.getElementById('latitude').value = marker.getPosition().lat();
+            document.getElementById('longitude').value = marker.getPosition().lng();
+        });
+    }
+
+    // Get the current location of the user
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+
+                // Set marker and map to the current location
+                const userLocation = { lat: lat, lng: lng };
+                map.setCenter(userLocation);
+                marker.setPosition(userLocation);
+
+                // Update form fields with latitude and longitude
+                document.getElementById('latitude').value = lat;
+                document.getElementById('longitude').value = lng;
+            }, function(error) {
+                console.error('Error occurred. Error code: ' + error.code);
+            });
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+</script>
 
 {% endblock %}
