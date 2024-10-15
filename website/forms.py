@@ -52,4 +52,12 @@ class BookingForm(FlaskForm):
     def validate_time_of_appointment(self, field):
         if field.data < time(6, 0) or field.data > time(21,0):
             raise ValidationError('The appointment time must be between 6:00 AM and 9:00 PM.')
+        
+
+class OrderForm(FlaskForm):
+    order_status = SelectField('Order Status', choices=[('Pending', 'Pending'), ('Accepted', 'Accepted'),
+                                                        ('Out for delivery', 'Out for delivery'),
+                                                        ('Delivered', 'Delivered'), ('Canceled', 'Canceled')])
+
+    update = SubmitField('Update Status')
 

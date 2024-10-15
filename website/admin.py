@@ -1,8 +1,8 @@
-from flask import Blueprint, render_template, flash, send_from_directory, redirect
+from flask import Blueprint, render_template, flash, send_from_directory, redirect, request
 from flask_login import login_required, current_user
-from .forms import ShopItemsForm
+from .forms import ShopItemsForm, OrderForm, BookingForm
 from werkzeug.utils import secure_filename
-from .models import Product
+from .models import Product, Order, Customer, Booking
 from . import db
 
 admin = Blueprint('admin', __name__)
@@ -127,4 +127,124 @@ def delete_item(item_id):
         return redirect('/shop_items')
 
     return render_template('404.html')
+
+@admin.route('/view_orders')
+@login_required
+def order_view():
+    if current_user.id == 1:
+        orders = Order.query.all()
+        return render_template('view_orders.html', orders=orders)
+    return render_template('404.html')
+
+
+@admin.route('/update_order/<int:order_id>', methods=['GET', 'POST'])
+@login_required
+def update_order(order_id):
+    if current_user.id == 1:
+        form = OrderForm()
+
+        order = Order.query.get(order_id)
+
+        if form.validate_on_submit():
+            status = form.order_status.data
+            order.status = status
+
+            try:
+                db.session.commit()
+                flash(f'Order {order_id} Updated successfully')
+                return redirect('/view_orders')
+            except Exception as e:
+                print(e)
+                flash(f'Order {order_id} not updated')
+                return redirect('/view_orders')
+
+        return render_template('update_order.html', form=form)
+
+    return render_template('404.html')
+
+
+@admin.route('/customers')
+@login_required
+def display_customers():
+    if current_user.id == 1:
+        customers = Customer.query.all()
+        return render_template('customers.html', customers=customers)
+    return render_template('404.html')
+
+
+@admin.route('/admin_page')
+@login_required
+def admin_page():
+    if current_user.id == 1:
+        return render_template('admin.html')
+    return render_template('404.html')
+
+
+@admin.route('/view_bookings', methods=['GET'])
+@login_required
+def view_bookings():
+    if current_user.id == 1:  # Ensure only admins can access
+        bookings = Booking.query.all()  # Fetch all bookings
+        return render_template('view_bookings.html', bookings=bookings)
+    return render_template('404.html')
+
+
+@admin.route('/update_booking/<int:booking_id>', methods=['GET', 'POST'])
+@login_required
+def update_booking(booking_id):
+    if current_user.id == 1:  # Only allow admins
+        form = BookingForm()  # Assuming you have a BookingForm defined
+
+        # Retrieve the booking from the database
+        booking = Booking.query.get_or_404(booking_id)
+
+        # Populate the form with the current booking data
+        if request.method == 'GET':
+            form.item_type.data = booking.item_type
+            form.item_description.data = booking.item_description
+            form.quantity.data = booking.quantity
+            form.date_of_appointment.data = booking.date_of_appointment
+            form.time_of_appointment.data = booking.time_of_appointment
+
+        # Validate the form on submission
+        if form.validate_on_submit():
+            booking.item_type = form.item_type.data
+            booking.item_description = form.item_description.data
+            booking.quantity = form.quantity.data
+            booking.date_of_appointment = form.date_of_appointment.data
+            booking.time_of_appointment = form.time_of_appointment.data
+
+            try:
+                db.session.commit()
+                flash(f'Booking {booking_id} updated successfully')
+                return redirect('/view-bookings')
+            except Exception as e:
+                print(e)
+                flash(f'Failed to update Booking {booking_id}')
+                return redirect('/view-bookings')
+
+        # Pass the booking object to the template
+        return render_template('booking_update.html', form=form, booking=booking)
+
+    return render_template('404.html')
+
+
+@admin.route('/delete_booking/<int:booking_id>', methods=['POST'])
+@login_required
+def delete_booking(booking_id):
+    if current_user.id == 1:  # Only allow admins
+        booking = Booking.query.get_or_404(booking_id)
+
+        try:
+            db.session.delete(booking)
+            db.session.commit()
+            flash(f'Booking {booking_id} deleted successfully')
+        except Exception as e:
+            print(e)
+            flash(f'Failed to delete Booking {booking_id}')
+
+        return redirect('/view_bookings')
+    
+    return render_template('404.html')
+
 

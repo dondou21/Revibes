@@ -56,15 +56,28 @@
   
             <li class="nav-item mx-2" id="items">
               
+              {% if cart | length < 1 %}
               <a class="nav-link text-grey" href="/cart"><span class="badge bg-success"></span> Cart
                 <i class="fa-solid fa-cart-shopping"></i>
-              </a>           
+              </a>
+              {% else %}
+              <a class="nav-link text-grey" href="/cart"><span class="badge bg-success"></span> Cart
+                <i class="bi bi-{{ cart | length }}-square-fill"></i>
+              </a>
               
+              {% endif %}
+              
+            </li>
+
+            <li class="nav-item mx-2" id="items">
+              <a class="nav-link text-grey" href="/booking"><span class="badge bg-success"></span> Book Collect
+                <i class="bi bi-calendar-check"></i>
+              </a>
             </li>
   
             <li class="nav-item mx-2" id="items">
-              <a class="nav-link text-grey" href="#"><span class="badge bg-success"></span> WishList
-                <i class="fa-solid fa-heart"></i>
+              <a class="nav-link text-grey" href="/"><span class="badge bg-success"></span> Home
+                <i class="bi bi-house-door"></i>
               </a>
             </li>
   
@@ -79,7 +92,7 @@
               
                 {% if current_user.is_authenticated %}
                 <li><a class="dropdown-item" href="/profile/{{ current_user.id }}">Profile <i class="fa-solid fa-user"></i></a></li>
-                <li><a class="dropdown-item" href="#">Orders <i class="fa-solid fa-truck-fast"></i></a></li>
+                <li><a class="dropdown-item" href="/orders">Orders <i class="fa-solid fa-truck-fast"></i></a></li>
                 <li><a class="dropdown-item" href="/logout">Log Out <i class="fa-solid fa-right-from-bracket"></i></a></li>
                 
                 {% else %}
