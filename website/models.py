@@ -59,10 +59,12 @@ class Order(db.Model):
     quantity = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Float, nullable=False)
     status = db.Column(db.String(100), nullable=False)
-    # payment_id = db.column(db.String(1000), nullable=False)
+    # payment_id = db.Column(db.String(1000), nullable=False)
 
-    Customer_link = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
+    customer_link = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
     product_link = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+
+    customer = db.relationship('Customer', backref='orders')
 
     def __str__(self):
         return '<Order %r>'  % self.id
