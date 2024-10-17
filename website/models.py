@@ -81,7 +81,7 @@ class Booking(db.Model):
     longitude = db.Column(db.Float, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    Customer_link = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
+    customer_link = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
 
     def __str__(self):
         return '<Booking %r>' % self.id

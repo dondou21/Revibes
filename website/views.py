@@ -33,21 +33,20 @@ def booking():
         date_of_appointment = form.date_of_appointment.data
         time_of_appointment = form.time_of_appointment.data
         latitude = form.latitude.data
-        longitude = form.latitude.data
+        longitude = form.longitude.data  # Corrected this line
 
         file = form.item_picture.data
 
+        # Validate date and time of appointment
         if date_of_appointment < datetime.today().date():
-            flash('Date of appointment cannot be in the pass!!!')
-            print('Booking Failed')
+            flash('Date of appointment cannot be in the past!!!')
             return render_template('booking.html', form=form)
         
         if not (time_of_appointment >= time(6, 0) and time_of_appointment <= time(21, 0)):
             flash('Time of appointment must be between 6:00 AM and 9:00 PM !!!')
-            print('Booking Failed')
             return render_template('booking.html', form=form)
 
-
+        # Process image upload if file exists
         if file:
             file_name = secure_filename(file.filename)
             file_path = f'./media/{file_name}'
@@ -55,32 +54,32 @@ def booking():
         else:
             file_path = None
 
-        customer_link =current_user.id
+        # Create new booking
+        customer_link = current_user.id
 
-        new_booking = Booking()
-        new_booking.item_type = item_type 
-        new_booking.item_description = item_description 
-        new_booking.quantity = quantity 
-        new_booking.date_of_appointment = date_of_appointment
-        new_booking.time_of_appointment = time_of_appointment 
-        new_booking.latitude = latitude 
-        new_booking.longitude = longitude 
-
-        new_booking.item_picture = file_path
-
-        new_booking.Customer_link = customer_link
+        new_booking = Booking(
+            item_type=item_type,
+            item_description=item_description,
+            quantity=quantity,
+            date_of_appointment=date_of_appointment,
+            time_of_appointment=time_of_appointment,
+            latitude=latitude,
+            longitude=longitude,
+            item_picture=file_path,
+            customer_link=customer_link  # Ensure correct foreign key linkage
+        )
 
         try:
             db.session.add(new_booking)
             db.session.commit()
             flash('Appointment Submitted')
-            print('Booking Added')
-            return redirect('/', form=form)
+            return redirect('/')  # Redirect without form parameter
         except Exception as e:
             print(e)
             flash('Booking not Added !!!')
 
     return render_template('booking.html', form=form)
+
 
 
 @views.route('/add_to_cart/<int:item_id>')

@@ -31,65 +31,70 @@
                 <td>{{ form.item_picture }}</td>
                 <td>
                     <button type="button" onclick="getLocation()">Use Current Location</button>
-                    <div id="map" style="height: 300px; width: 100%;"></div>
+                    <div id="map" style="height: 300px; width: 100%; margin-top: 10px;"></div>
                     {{ form.latitude }}
                     {{ form.longitude }}
                 </td>
-                <td>{{ form.submit}}</td>
+                <td>{{ form.submit }}</td>
             </tr>
         </tbody>
     </table>
 </form>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+<!-- Include Leaflet.js -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
 <script>
     let map;
     let marker;
-    
+
     function initMap() {
-        // Default map location (center of the map)
-        const defaultLocation = { lat: -1.970579, lng: 30.104429 }; // You can change this to any location
-        map = new google.maps.Map(document.getElementById("map"), {
-            center: defaultLocation,
-            zoom: 15,
-        });
+        const defaultLocation = { lat: -1.970579, lng: 30.104429 }; // Default to Kigali
+        map = L.map('map').setView([defaultLocation.lat, defaultLocation.lng], 15);
 
-        // Add a marker at the default location
-        marker = new google.maps.Marker({
-            position: defaultLocation,
-            map: map,
-            draggable: true, // Allow user to drag the marker
-        });
+        // Load and display tile layers from OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
 
-        // When marker is dragged, update the latitude and longitude in the form
-        google.maps.event.addListener(marker, 'dragend', function() {
-            document.getElementById('latitude').value = marker.getPosition().lat();
-            document.getElementById('longitude').value = marker.getPosition().lng();
+        // Add marker to the default location
+        marker = L.marker([defaultLocation.lat, defaultLocation.lng], { draggable: true }).addTo(map);
+
+        // Update form fields when marker is dragged
+        marker.on('dragend', function (e) {
+            const latLng = marker.getLatLng();
+            document.getElementById('latitude').value = latLng.lat;
+            document.getElementById('longitude').value = latLng.lng;
         });
     }
 
-    // Get the current location of the user
+    // Get user's location
     function getLocation() {
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
+            navigator.geolocation.getCurrentPosition(function (position) {
                 const lat = position.coords.latitude;
                 const lng = position.coords.longitude;
 
-                // Set marker and map to the current location
-                const userLocation = { lat: lat, lng: lng };
-                map.setCenter(userLocation);
-                marker.setPosition(userLocation);
+                // Center the map and move the marker to the user's location
+                map.setView([lat, lng], 15);
+                marker.setLatLng([lat, lng]);
 
-                // Update form fields with latitude and longitude
+                // Update form fields with the user's location
                 document.getElementById('latitude').value = lat;
                 document.getElementById('longitude').value = lng;
-            }, function(error) {
+            }, function (error) {
                 console.error('Error occurred. Error code: ' + error.code);
             });
         } else {
             alert("Geolocation is not supported by this browser.");
         }
     }
+
+    // Initialize the map on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        initMap();
+    });
 </script>
 
 {% endblock %}
